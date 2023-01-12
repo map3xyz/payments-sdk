@@ -4,15 +4,19 @@ import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import { useAddWatchedAddressMutation } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
+import { listenToWatchedAddress } from '../../utils/supabase';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
 
   const { width } = useModalSize();
+
+  const [addWatchedAddress] = useAddWatchedAddressMutation();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -22,7 +26,25 @@ const QRCode: React.FC<Props> = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        await getDepositAddress();
+        const { address } = await getDepositAddress();
+
+        const { data } = await addWatchedAddress({
+          variables: {
+            address,
+            assetId: state.asset!.id!,
+            confirmationsToWatch: 3,
+          },
+        });
+
+        if (!data?.addWatchedAddress) {
+          throw new Error('Unable to watch address.');
+        }
+
+        console.log(data.addWatchedAddress);
+
+        listenToWatchedAddress(data.addWatchedAddress, (payload: any) => {
+          console.log(payload);
+        });
       } catch (e) {
         console.error(e);
       }
@@ -30,6 +52,18 @@ const QRCode: React.FC<Props> = () => {
     run();
 
     return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+  }, []);
+
+  useEffect(() => {
+    if (
+      state.depositAddress.status === 'success' &&
+      state.depositAddress.data
+    ) {
+      listenToWatchedAddress(
+        state.depositAddress.data.address,
+        (payload: any) => console.log(payload)
+      );
+    }
   }, []);
 
   return (

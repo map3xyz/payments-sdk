@@ -99,6 +99,7 @@
     "@apollo/client": "^3.7.0",
     "@fortawesome/fontawesome-free": "6.1.2",
     "@map3xyz/components": "^0.1.44",
+    "@supabase/supabase-js": "^2.2.2",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/web3-provider": "^1.8.0",
     "eth-testing": "^1.10.0",

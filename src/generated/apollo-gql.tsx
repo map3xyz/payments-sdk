@@ -43,10 +43,41 @@ export type AssetWithPrice = IAsset & {
   type?: Maybe<Scalars['String']>;
 };
 
+export type BridgeQuote = {
+  __typename?: 'BridgeQuote';
+  aggregator?: Maybe<Scalars['String']>;
+  approval?: Maybe<QuoteApprovalInfo>;
+  estimate?: Maybe<QuoteEstimate>;
+  id?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']>;
+  quote?: Maybe<GetBridgeQuoteParams>;
+  transaction?: Maybe<BridgeTransactionRequest>;
+};
+
+export type BridgeTransactionRequest = {
+  __typename?: 'BridgeTransactionRequest';
+  chainId?: Maybe<Scalars['Int']>;
+  data?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['String']>;
+  gasLimit?: Maybe<Scalars['String']>;
+  gasPrice?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
 export type Config = {
   __typename?: 'Config';
   assetId?: Maybe<Scalars['String']>;
   mappedAssetId?: Maybe<Scalars['String']>;
+};
+
+export type GetBridgeQuoteParams = {
+  __typename?: 'GetBridgeQuoteParams';
+  amount?: Maybe<Scalars['String']>;
+  fromAddress?: Maybe<Scalars['String']>;
+  fromAssetId?: Maybe<Scalars['String']>;
+  toAddress?: Maybe<Scalars['String']>;
+  toAssetId?: Maybe<Scalars['String']>;
 };
 
 export type IAsset = {
@@ -79,9 +110,21 @@ export type Logo = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addWatchedAddress?: Maybe<Scalars['ID']>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
+  prepareBridgeQuote?: Maybe<BridgeQuote>;
+  removeWatchedAddress?: Maybe<Scalars['ID']>;
+  subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
+};
+
+
+export type MutationAddWatchedAddressArgs = {
+  address: Scalars['String'];
+  assetId: Scalars['String'];
+  confirmationsToWatch: Scalars['Int'];
+  memo?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -97,6 +140,26 @@ export type MutationCreateSdkConfigForOrganizationArgs = {
 };
 
 
+export type MutationPrepareBridgeQuoteArgs = {
+  amount: Scalars['String'];
+  fromAddress: Scalars['String'];
+  fromAssetId: Scalars['String'];
+  toAddress: Scalars['String'];
+  toAssetId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+
+export type MutationRemoveWatchedAddressArgs = {
+  watchedAddressId?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationSubscribeToBridgeTransactionArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationUpdateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   enabled: Scalars['Boolean'];
@@ -108,6 +171,7 @@ export type Network = {
   __typename?: 'Network';
   address?: Maybe<Scalars['String']>;
   assetId?: Maybe<Scalars['String']>;
+  bridged?: Maybe<Scalars['Boolean']>;
   decimals?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['String']>;
   identifiers?: Maybe<Identifiers>;
@@ -120,10 +184,10 @@ export type Network = {
 
 export type Organization = {
   __typename?: 'Organization';
-  created?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
-  updated?: Maybe<Scalars['Int']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 export type PaymentMethod = {
@@ -258,16 +322,32 @@ export type QuerySearchAssetsForOrganizationArgs = {
   query?: InputMaybe<Scalars['String']>;
 };
 
+export type QuoteApprovalInfo = {
+  __typename?: 'QuoteApprovalInfo';
+  address?: Maybe<Scalars['String']>;
+  amount?: Maybe<Scalars['String']>;
+};
+
+export type QuoteEstimate = {
+  __typename?: 'QuoteEstimate';
+  amountToReceive?: Maybe<Scalars['String']>;
+  executionDurationSeconds?: Maybe<Scalars['Int']>;
+  fromAmountUsd?: Maybe<Scalars['Float']>;
+  gasCostsUsd?: Maybe<Scalars['Float']>;
+  slippage?: Maybe<Scalars['Float']>;
+  toAmountUsd?: Maybe<Scalars['Float']>;
+};
+
 export type SdkConfigField = {
   __typename?: 'SdkConfigField';
   assetId?: Maybe<Scalars['String']>;
-  created?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
   enabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['ID']>;
   mappedAssetId?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
-  updated?: Maybe<Scalars['Int']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 export type WalletConnectAppType = {
@@ -323,9 +403,39 @@ export type WalletConnectWallet = {
   versions?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type WatchedAddress = {
+  __typename?: 'WatchedAddress';
+  address?: Maybe<Scalars['String']>;
+  assetId?: Maybe<Scalars['String']>;
+  confirmationsToWatch?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  memo?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  txAmount?: Maybe<Scalars['Int']>;
+  txBlockHash?: Maybe<Scalars['String']>;
+  txBlockHeight?: Maybe<Scalars['Int']>;
+  txCreatedAt?: Maybe<Scalars['String']>;
+  txId?: Maybe<Scalars['String']>;
+  unsubscribed?: Maybe<Scalars['Boolean']>;
+  updated?: Maybe<Scalars['String']>;
+};
+
 export type AssetFieldsFragment = { __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null };
 
 export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
+
+export type AddWatchedAddressMutationVariables = Exact<{
+  address: Scalars['String'];
+  assetId: Scalars['String'];
+  confirmationsToWatch: Scalars['Int'];
+  memo?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAddress?: string | null };
 
 export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
   mappedAssetId?: InputMaybe<Scalars['String']>;
@@ -422,6 +532,45 @@ export const NetworkFieldsFragmentDoc = gql`
   symbol
 }
     `;
+export const AddWatchedAddressDocument = gql`
+    mutation AddWatchedAddress($address: String!, $assetId: String!, $confirmationsToWatch: Int!, $memo: String) {
+  addWatchedAddress(
+    address: $address
+    assetId: $assetId
+    confirmationsToWatch: $confirmationsToWatch
+    memo: $memo
+  )
+}
+    `;
+export type AddWatchedAddressMutationFn = Apollo.MutationFunction<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
+
+/**
+ * __useAddWatchedAddressMutation__
+ *
+ * To run a mutation, you first call `useAddWatchedAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddWatchedAddressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addWatchedAddressMutation, { data, loading, error }] = useAddWatchedAddressMutation({
+ *   variables: {
+ *      address: // value for 'address'
+ *      assetId: // value for 'assetId'
+ *      confirmationsToWatch: // value for 'confirmationsToWatch'
+ *      memo: // value for 'memo'
+ *   },
+ * });
+ */
+export function useAddWatchedAddressMutation(baseOptions?: Apollo.MutationHookOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>(AddWatchedAddressDocument, options);
+      }
+export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatchedAddressMutation>;
+export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
+export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
 export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
     query GetAssetByMappedAssetIdAndNetworkCode($mappedAssetId: String, $networkCode: String) {
   assetByMappedAssetIdAndNetworkCode(

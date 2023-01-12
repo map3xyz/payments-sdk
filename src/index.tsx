@@ -144,7 +144,7 @@ export class Map3 {
       }),
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
-        'X-MAP3-USER': this.config.userId,
+        'x-map3-user': this.config.userId,
       },
       uri: (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/graphql',
     });

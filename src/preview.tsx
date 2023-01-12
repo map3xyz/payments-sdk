@@ -16,11 +16,12 @@ root.render(
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             return {
-              address: '0xd59d78c15Ecc41b8c01382b4a616Ee4eBf1e18Af',
+              address: '0x165CD37b4C644C2921454429E7F9358d18A45e14',
               memo: '0x666f',
             };
           },
           networkCode: 'goerli',
+          rainbowRoad: true,
           theme: 'dark',
           userId: 'preview-user-id',
         });
